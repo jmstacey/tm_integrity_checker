@@ -2,7 +2,7 @@
 
 # =TM Integrity Checker (Simple) Program Overview
 #
-# Version:: 1.0 | July 18, 2014
+# Version:: 1.1 | July 22, 2014
 # Author:: Jon Stacey
 # Email:: jon@jonsview.com
 # Website:: jonsview.com
@@ -28,6 +28,7 @@
 # This script is provided "AS-IS" with no warranty or guarantees.
 #
 # ==Changelog
+# 1.1 - 7/22/2014: Check for existence of the time machine path before starting. Useful as a heads up particularly when rotating disks.
 # 1.0 - 7/18/2014: Forked from TM Integrity Checker and simplified
 
 require 'find'
@@ -46,10 +47,12 @@ class TMIntegrityChecker
   def initialize(start_path)
     @ACCOUNT_NAME       = "Jon Stacey\u2019s iMac"   # Name of your Mac
     @DRIVE_NAME         = "Fusion"                   # Name of your primary hard drive
-    @TIME_MACHINE_NAME  = "Time Machine 2"           # The name of your Time Machine Backup drive
+    @TIME_MACHINE_NAME  = "Time Machine 1"           # The name of your Time Machine Backup drive
     @START_PATH         = start_path                 # The starting directory (if you don't want to start at the root level) [INCLUDE prefixed forward slash]
 
     @TIME_MACHINE_PATH  = File.join('/Volumes/', @TIME_MACHINE_NAME, '/Backups.backupdb/', @ACCOUNT_NAME, '/Latest/', @DRIVE_NAME)
+
+    abort("Oops! That Time Machine path does not exist [#{@TIME_MACHINE_PATH}].".bold.red) unless File.exists?(@TIME_MACHINE_PATH)
 
     @bytes_processed    = 0
     @files_processed    = 0
