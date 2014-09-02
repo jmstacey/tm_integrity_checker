@@ -47,15 +47,17 @@ class TMIntegrityChecker
   def initialize(start_path)
     abort("Oops! No start_path provided.".bold.red) unless !start_path.nil? && File.exists?(start_path)
 
-    @ACCOUNT_NAME       = "Jon Stacey\u2019s iMac"   # Name of your Mac
+    # @ACCOUNT_NAME       = "Jon Stacey\u2019s iMac"   # Name of your Mac
+    @ACCOUNT_NAME       = "Jon Stacey's iMac"   # Name of your Mac
     @DRIVE_NAME         = "Fusion"                   # Name of your primary hard drive
-    @TIME_MACHINE_NAME  = "Time Machine 2"           # The name of your Time Machine Backup drive
+    @TIME_MACHINE_NAME  = "Backups"           # The name of your Time Machine Backup drive
     @START_PATH         = start_path                 # The starting directory (if you don't want to start at the root level) [INCLUDE prefixed forward slash]
 
     # Note: Excludes file cannot end in wildcard like the rsync exclude file.
     @EXCLUDE_FILES      = IO.readlines("excludes_file.txt").map &:chomp
 
-    @TIME_MACHINE_PATH  = File.join('/Volumes/', @TIME_MACHINE_NAME, '/Backups.backupdb/', @ACCOUNT_NAME, '/Latest/', @DRIVE_NAME)
+    # @TIME_MACHINE_PATH  = File.join('/Volumes/', @TIME_MACHINE_NAME, '/Backups.backupdb/', @ACCOUNT_NAME, '/Latest/', @DRIVE_NAME)
+    @TIME_MACHINE_PATH  = File.join('/Volumes/', @TIME_MACHINE_NAME, @ACCOUNT_NAME, @DRIVE_NAME, 'Latest')
 
     abort("Oops! That Time Machine path does not exist [#{@TIME_MACHINE_PATH}].".bold.red) unless File.exists?(@TIME_MACHINE_PATH)
 
