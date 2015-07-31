@@ -33,11 +33,10 @@
 
 require 'find'
 require 'time'
-require 'digest'
 require 'colorize'
-require 'action_view'
+require 'active_support'
 
-include ActionView::Helpers::NumberHelper
+include ActionView::NumberHelper
 
 I18n.config.enforce_available_locales = false
 
@@ -49,7 +48,7 @@ class TMIntegrityChecker
 
     @ACCOUNT_NAME       = "Jon Stacey\u2019s iMac"   # Name of your Mac
     @DRIVE_NAME         = "Fusion"                   # Name of your primary hard drive
-    @TIME_MACHINE_NAME  = "Time Machine 2"           # The name of your Time Machine Backup drive
+    @TIME_MACHINE_NAME  = "Time Machine"           # The name of your Time Machine Backup drive
     @START_PATH         = start_path                 # The starting directory (if you don't want to start at the root level) [INCLUDE prefixed forward slash]
 
     # Note: Excludes file cannot end in wildcard like the rsync exclude file.
@@ -93,7 +92,7 @@ class TMIntegrityChecker
     print "Current File   :".bold  + " #{@current_file}\n"
     print "Total Progress : ".bold +
           "#{number_to_percentage((@files_processed.to_f / @total_files.to_f)*100, precision: 2)}".green.bold +
-          " (#{number_with_delimiter(@files_processed)} / #{number_with_delimiter(@total_files)})\n"
+          " (#{number_to_delimited(@files_processed)} / #{number_to_delimited(@total_files)})\n"
     # print "Total Progress : " +
     #       "#{number_to_percentage((@bytes_processed.to_f / @total_bytes.to_f)*100, precision: 2)}".green.bold +
     #       " (#{number_to_human_size(@bytes_processed)} / #{number_to_human_size(@total_bytes)})\n"
@@ -107,12 +106,15 @@ class TMIntegrityChecker
     Find.find(@START_PATH) do |path|
       # next if File.directory? path
       if File.directory? path
-        if path.start_with?(*@EXCLUDE_FILES)
-          @alert_buffer << "Notice:".yellow.bold + " #{path}".blue + " directory excluded."
-          Find.prune
-        else
-          next
+        @EXCLUDE_FILES.each do |exclude_filter|
+          if File.fnmatch?(exclude_filter, path)
+            @alert_buffer << "Notice:".yellow.bold + " #{path}".blue + " directory excluded."
+            Find.prune
+            break
+          end
         end
+        next
+
       end
 
       begin
@@ -135,8 +137,12 @@ class TMIntegrityChecker
 
     begin
       if _file_or_symlink_exists?(tm_file)
-        if (File.lstat(file).mtime - File.lstat(tm_file).mtime) > 86400
-          @alert_buffer << "!!! ALERT !!!".white.on_red.bold + " #{file}".blue + " mtimes are more than 24 hours out of sync."
+        if File.lstat(file).mtime == File.lstat(tm_file).mtime
+          if !File.symlink?(file) && (File.size(file) != File.size(tm_file))
+            @alert_buffer << "!!! ALERT !!!".white.on_red.bold + " #{file}".blue + " file sizes don't match."
+          end
+        elsif (File.lstat(file).mtime - File.lstat(tm_file).mtime) > 86400
+          @alert_buffer << "Warning: ".yellow.bold + " #{file}".blue + " mtimes are more than 24 hours out of sync."
         end
       else
         @alert_buffer << "!!! ALERT !!!".white.on_red.bold + " #{file}".blue + " is missing from Time Machine."
@@ -159,7 +165,7 @@ class TMIntegrityChecker
   end
 
   def _show_collection_progress
-    print "\r\e[KApproximately #{number_with_delimiter(@total_files)} files (#{number_to_human_size(@total_bytes)}) to analyze."
+    print "\r\e[KApproximately #{number_to_delimited(@total_files)} files (#{number_to_human_size(@total_bytes)}) to analyze."
   end
 
   def _run_worker(worker_method, progress_method, trailing_progress = true, frequency = 1)
@@ -188,7 +194,7 @@ class TMIntegrityChecker
 
     puts ""
     print ('=' * 50).bold
-    puts "\nDone!".bold + " Checked the integrity of #{number_with_delimiter(@files_processed)} files. There are #{number_with_delimiter(@total_alerts)} alerts or notices."
+    puts "\nDone!".bold + " Checked the integrity of #{number_to_delimited(@files_processed)} files. There are #{number_to_delimited(@total_alerts)} alerts or notices."
   end
 
 end
