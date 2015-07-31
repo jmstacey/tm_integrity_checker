@@ -1,7 +1,3 @@
-/Users/jon/Downloads
-/Users/jon/.Trash
-/Users/bamboo/backups
-/Users/jon/Library/Saved Application State
 /.DocumentRevisions-V100
 /.MobileBackups
 /MobileBackups.trash
@@ -46,23 +42,3 @@
 /Library/Logs
 /System/Library/Caches
 /System/Library/Extensions/Caches
-/Users/jon/Library/Application\ Support/SyncServices/data.version
-/Users/jon/Library/Caches
-/Users/jon/Library/Logs
-/Users/jon/Library/Mail/Envelope\ Index
-/Users/jon/Library/Mail/Envelope\ Index-journal
-/Users/jon/Library/Mail/AvailableFeeds
-/Users/jon/Library/Mail/Metadata/BackingStoreUpdateJournal
-/Users/jon/Library/Mail/V2/MailData/Envelope\ Index
-/Users/jon/Library/Mail/V2/MailData/Envelope\ Index-journal
-/Users/jon/Library/Mail/V2/MailData/AvailableFeeds
-/Users/jon/Library/Mail/V2/MailData/BackingStoreUpdateJournal
-/Users/jon/Library/Mail/V2/MailData/Envelope\ Index-shm
-/Users/jon/Library/Mail/V2/MailData/Envelope\ Index-wal
-/Users/jon/Library/Mirrors
-/Users/jon/Library/PubSub/Database
-/Users/jon/Library/PubSub/Downloads
-/Users/jon/Library/PubSub/Feeds
-/Users/jon/Library/Safari/Icons.db
-/Users/jon/Library/Safari/WebpageIcons.db
-/Users/jon/Library/Safari/HistoryIndex.sk
